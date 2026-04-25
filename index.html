@@ -4,15 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>I Love You 💗</title>
+
   <style>
     :root {
       --bg: #000000;
       --text-main: #f7e9f2;
       --text-sub: #efddea;
+      --text-pre: rgba(255, 255, 255, 0.6);
+
       --glow-pink: rgba(255, 145, 191, 0.42);
       --glow-soft: rgba(255, 255, 255, 0.14);
+
       --heart: rgba(255, 174, 205, 0.9);
-      --heart-soft: rgba(255, 174, 205, 0.35);
+
       --petal-a: rgba(255, 193, 212, 0.72);
       --petal-b: rgba(255, 220, 232, 0.72);
       --petal-c: rgba(210, 236, 255, 0.72);
@@ -25,8 +29,7 @@
       user-select: none;
     }
 
-    html,
-    body {
+    html, body {
       width: 100%;
       height: 100%;
       margin: 0;
@@ -43,420 +46,271 @@
         "Segoe UI",
         system-ui,
         sans-serif;
-      cursor: default;
       position: relative;
       color: var(--text-main);
       -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
     }
 
     .scene {
       position: fixed;
       inset: 0;
-      background:
-        radial-gradient(circle at center, rgba(255, 255, 255, 0.02), transparent 45%),
-        radial-gradient(circle at 50% 35%, rgba(255, 145, 191, 0.08), transparent 34%),
-        linear-gradient(180deg, #000000 0%, #050505 100%);
       overflow: hidden;
       isolation: isolate;
-    }
-
-    .scene::before {
-      content: "";
-      position: absolute;
-      inset: 0;
       background:
-        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.045), transparent 58%),
-        radial-gradient(circle at 50% 50%, rgba(255, 174, 205, 0.03), transparent 30%);
-      opacity: 0.9;
-      pointer-events: none;
-    }
-
-    .fx-layer,
-    .content {
-      position: absolute;
-      inset: 0;
+        radial-gradient(circle at center, rgba(255,255,255,0.02), transparent 45%),
+        linear-gradient(180deg, #000000, #050505);
     }
 
     .fx-layer {
+      position: absolute;
+      inset: 0;
       z-index: 1;
       pointer-events: none;
-      overflow: hidden;
     }
 
-    .content {
-      z-index: 2;
+    .content,
+    .preloader {
+      position: absolute;
+      inset: 0;
       display: grid;
       place-items: center;
+      text-align: center;
       padding: 24px;
       pointer-events: none;
     }
 
-    .text-wrap {
-      text-align: center;
-      transform: translateY(8px);
-      animation: intro 1.7s cubic-bezier(0.22, 1, 0.36, 1) 0.08s forwards;
+    .content {
+      z-index: 2;
       opacity: 0;
-      filter: blur(10px);
-      will-change: transform, opacity, filter;
+    }
+
+    .preloader {
+      z-index: 3;
+      color: var(--text-pre);
+    }
+
+    .preloader.fade-in {
+      animation: fadeIn 1.2s ease forwards;
+    }
+
+    .preloader.fade-out {
+      animation: fadeOut 1.2s ease forwards;
+    }
+
+    .pre-text {
+      font-size: clamp(1rem, 3vw, 1.6rem);
+      line-height: 1.3;
+      font-style: italic;
+      opacity: 0;
+      animation: fadeIn 1.6s ease forwards;
+    }
+
+    .pre-sub {
+      margin-top: 0.6em;
+      font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+      opacity: 0.7;
+    }
+
+    .text-wrap {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    .text-wrap.show {
+      animation: intro 1.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
     .headline {
       margin: 0;
       font-size: clamp(2.8rem, 8vw, 6.6rem);
-      line-height: 0.95;
-      letter-spacing: -0.04em;
       font-style: italic;
       font-weight: 700;
-      color: var(--text-main);
       text-shadow:
         -1px -1px 0 #000,
         1px -1px 0 #000,
         -1px 1px 0 #000,
         1px 1px 0 #000,
-        0 0 12px var(--glow-pink),
-        0 0 28px rgba(255, 145, 191, 0.2),
-        0 0 52px var(--glow-soft);
-      filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.08));
+        0 0 12px var(--glow-pink);
     }
 
     .subline {
-      margin: 0.42em 0 0;
-      font-size: clamp(1.15rem, 3vw, 1.9rem);
-      line-height: 1.15;
-      letter-spacing: -0.02em;
+      margin-top: 0.4em;
+      font-size: clamp(1.1rem, 3vw, 1.8rem);
       font-style: italic;
-      font-weight: 500;
-      color: var(--text-sub);
-      text-shadow:
-        -1px -1px 0 #000,
-        1px -1px 0 #000,
-        -1px 1px 0 #000,
-        1px 1px 0 #000,
-        0 0 10px rgba(255, 190, 220, 0.25);
-      opacity: 0.95;
+      opacity: 0.9;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; filter: blur(6px); }
+      to { opacity: 1; filter: blur(0); }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; filter: blur(0); }
+      to { opacity: 0; filter: blur(6px); }
     }
 
     @keyframes intro {
       0% {
         opacity: 0;
-        transform: translateY(16px) scale(0.985);
-        filter: blur(12px);
-      }
-      55% {
-        opacity: 1;
-        transform: translateY(0) scale(1.01);
-        filter: blur(2px);
+        transform: translateY(16px);
+        filter: blur(10px);
       }
       100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
         filter: blur(0);
       }
     }
 
     .particle {
       position: absolute;
-      left: 0;
-      top: 0;
-      transform: translate3d(0, 0, 0);
-      will-change: transform, opacity, filter;
       pointer-events: none;
-      mix-blend-mode: screen;
+      will-change: transform, opacity;
     }
 
     .heart {
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       color: var(--heart);
-      filter:
-        drop-shadow(0 0 4px rgba(255, 174, 205, 0.35))
-        drop-shadow(0 0 10px rgba(255, 174, 205, 0.15));
       opacity: 0;
-    }
-
-    .heart svg {
-      display: block;
-      width: 100%;
-      height: 100%;
     }
 
     .flower {
-      width: 34px;
-      height: 34px;
+      width: 44px;
+      height: 44px;
       opacity: 0;
-      filter:
-        drop-shadow(0 0 8px rgba(255, 255, 255, 0.08))
-        drop-shadow(0 0 14px rgba(255, 190, 220, 0.18));
-    }
-
-    .flower svg {
-      display: block;
-      width: 100%;
-      height: 100%;
     }
 
     @keyframes heart-fall {
       0% {
         opacity: 0;
-        transform: translate3d(0, 0, 0) scale(0.5) rotate(0deg);
+        transform: scale(0.5);
       }
-      12% {
-        opacity: 0.95;
-      }
+      10% { opacity: 1; }
       100% {
         opacity: 0;
-        transform: translate3d(var(--dx), var(--dy), 0) scale(var(--scale)) rotate(var(--rot));
+        transform: translateY(var(--dy)) scale(var(--scale)) rotate(var(--rot));
       }
     }
 
-    @keyframes flower-bloom {
+    @keyframes flower-fall {
       0% {
         opacity: 0;
-        transform: translate3d(0, 0, 0) scale(0.35) rotate(0deg);
-        filter: blur(2px) saturate(1.05);
+        transform: scale(0.5);
       }
-      18% {
-        opacity: 0.96;
-        filter: blur(0.4px) saturate(1.12);
+      15% {
+        opacity: 1;
       }
       100% {
         opacity: 0;
-        transform: translate3d(var(--dx), var(--dy), 0) scale(var(--scale)) rotate(var(--rot));
-        filter: blur(1px) saturate(1);
+        transform: translateY(var(--dy)) scale(1.4) rotate(var(--rot));
       }
     }
 
-    .float-hint {
-      position: absolute;
-      inset: auto 0 24px 0;
-      text-align: center;
-      font-size: 0.82rem;
-      color: rgba(255, 255, 255, 0.18);
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      z-index: 2;
-      pointer-events: none;
-      animation: hint 3.8s ease-in-out 1.6s infinite;
-    }
-
-    @keyframes hint {
-      0%, 100% { opacity: 0.14; transform: translateY(0); }
-      50% { opacity: 0.3; transform: translateY(-2px); }
-    }
-
-    @media (max-width: 480px) {
-      .headline {
-        letter-spacing: -0.05em;
-      }
-
-      .subline {
-        margin-top: 0.5em;
-      }
-    }
   </style>
 </head>
+
 <body>
-  <main class="scene" id="scene" aria-label="I Love You экран">
+  <main class="scene">
     <div class="fx-layer" id="fxLayer"></div>
 
-    <div class="content">
-      <div class="text-wrap">
+    <!-- Preloader -->
+    <div class="preloader fade-in" id="preloader">
+      <div>
+        <div class="pre-text">
+          попробуй потыкать на экран и повести пальчиком
+        </div>
+        <div class="pre-sub">
+          (рекомендую на ноутбуке смотреть)
+        </div>
+      </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="content" id="content">
+      <div class="text-wrap" id="textWrap">
         <h1 class="headline">I Love You 💗</h1>
         <p class="subline">sorry, my baby ;(</p>
       </div>
     </div>
-
-    <div class="float-hint">move • click</div>
   </main>
 
   <script>
-    (() => {
-      const scene = document.getElementById("scene");
-      const fxLayer = document.getElementById("fxLayer");
+    const fxLayer = document.getElementById("fxLayer");
+    const preloader = document.getElementById("preloader");
+    const content = document.getElementById("content");
+    const textWrap = document.getElementById("textWrap");
 
-      const state = {
-        lastHeartAt: 0,
-        lastX: 0,
-        lastY: 0,
-        pointerActive: false
-      };
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
 
-      const heartSVG = `
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path
-            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.53L12 21.35z"
-            stroke="currentColor"
-            stroke-width="1.6"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
+    function createHeart(x, y) {
+      const el = document.createElement("div");
+      el.className = "particle heart";
+
+      el.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M12 21s-6-4.35-9-8.5C-1 6 4 1 8 4c1.5 1 2.5 2.5 4 4 1.5-1.5 2.5-3 4-4 4-3 9 2 5 8.5C18 16.65 12 21 12 21z"
+          stroke="currentColor" stroke-width="1.5"/>
         </svg>
       `;
 
-      function rand(min, max) {
-        return Math.random() * (max - min) + min;
-      }
+      el.style.left = x + "px";
+      el.style.top = y + "px";
+      el.style.setProperty("--dy", rand(80, 160) + "px");
+      el.style.setProperty("--scale", rand(0.8, 1.2));
+      el.style.setProperty("--rot", rand(-180, 180) + "deg");
+      el.style.animation = "heart-fall 2s ease forwards";
 
-      function pick(arr) {
-        return arr[Math.floor(Math.random() * arr.length)];
-      }
+      fxLayer.appendChild(el);
+      setTimeout(() => el.remove(), 2000);
+    }
 
-      function createParticle({ x, y, kind }) {
-        const el = document.createElement("div");
-        el.className = `particle ${kind}`;
+    function createFlower(x, y) {
+      const el = document.createElement("div");
+      el.className = "particle flower";
 
-        const dx = rand(-26, 26).toFixed(2) + "px";
-        const dy = rand(90, 190).toFixed(2) + "px";
-        const rot = rand(-220, 220).toFixed(2) + "deg";
-        const scale = rand(0.82, 1.18).toFixed(2);
-        const duration = kind === "heart" ? rand(1600, 2800) : rand(1800, 3200);
+      el.innerHTML = `
+        <svg viewBox="0 0 48 48">
+          <circle cx="24" cy="24" r="6" fill="rgba(255,255,255,0.8)" />
+          <ellipse cx="24" cy="12" rx="6" ry="10" fill="var(--petal-a)" />
+          <ellipse cx="36" cy="24" rx="10" ry="6" fill="var(--petal-b)" />
+          <ellipse cx="24" cy="36" rx="6" ry="10" fill="var(--petal-c)" />
+          <ellipse cx="12" cy="24" rx="10" ry="6" fill="var(--petal-d)" />
+        </svg>
+      `;
 
-        el.style.left = `${x}px`;
-        el.style.top = `${y}px`;
-        el.style.setProperty("--dx", dx);
-        el.style.setProperty("--dy", dy);
-        el.style.setProperty("--rot", rot);
-        el.style.setProperty("--scale", scale);
-        el.style.animation = kind === "heart"
-          ? `heart-fall ${duration}ms cubic-bezier(0.12, 0.72, 0.18, 1) forwards`
-          : `flower-bloom ${duration}ms cubic-bezier(0.16, 0.8, 0.2, 1) forwards`;
+      el.style.left = x + "px";
+      el.style.top = y + "px";
+      el.style.setProperty("--dy", rand(120, 220) + "px");
+      el.style.setProperty("--rot", rand(-120, 120) + "deg");
+      el.style.animation = "flower-fall 2.6s ease forwards";
 
-        if (kind === "heart") {
-          const size = rand(11, 18);
-          el.style.width = `${size}px`;
-          el.style.height = `${size}px`;
-          el.innerHTML = heartSVG;
-          el.style.color = Math.random() > 0.5 ? "rgba(255, 174, 205, 0.92)" : "rgba(255, 196, 223, 0.9)";
-        } else {
-          const colors = [
-            "var(--petal-a)",
-            "var(--petal-b)",
-            "var(--petal-c)",
-            "var(--petal-d)"
-          ];
+      fxLayer.appendChild(el);
+      setTimeout(() => el.remove(), 2600);
+    }
 
-          const color = pick(colors);
-          const petals = 5 + Math.floor(Math.random() * 2);
-          const petalRadius = rand(6.8, 8.6);
-          const centerRadius = rand(2.9, 3.6);
+    window.addEventListener("mousemove", e => {
+      createHeart(e.clientX, e.clientY);
+    });
 
-          const petalNodes = Array.from({ length: petals }, (_, i) => {
-            const angle = (360 / petals) * i;
-            return `
-              <ellipse
-                cx="24"
-                cy="${16 - petalRadius}"
-                rx="${petalRadius}"
-                ry="${petalRadius * 1.18}"
-                fill="${color}"
-                opacity="0.88"
-                transform="rotate(${angle} 24 24)"
-              />
-            `;
-          }).join("");
+    window.addEventListener("click", e => {
+      createFlower(e.clientX, e.clientY);
+    });
 
-          el.style.width = `${rand(28, 42)}px`;
-          el.style.height = `${rand(28, 42)}px`;
+    // Preloader logic
+    setTimeout(() => {
+      preloader.classList.add("fade-out");
 
-          el.innerHTML = `
-            <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
-              <defs>
-                <filter id="watercolor-${Math.random().toString(36).slice(2, 8)}" x="-20%" y="-20%" width="140%" height="140%">
-                  <feGaussianBlur stdDeviation="0.6" />
-                  <feComponentTransfer>
-                    <feFuncA type="linear" slope="0.95" />
-                  </feComponentTransfer>
-                </filter>
-              </defs>
-              <g filter="url(#watercolor-${Math.random().toString(36).slice(2, 8)})">
-                ${petalNodes}
-                <circle cx="24" cy="24" r="${centerRadius}" fill="rgba(255, 245, 248, 0.95)" opacity="0.95" />
-                <circle cx="24" cy="24" r="${centerRadius + 0.9}" fill="rgba(255, 214, 229, 0.42)" />
-              </g>
-            </svg>
-          `;
-        }
+      setTimeout(() => {
+        preloader.style.display = "none";
+        content.style.opacity = "1";
+        textWrap.classList.add("show");
+      }, 1200);
 
-        fxLayer.appendChild(el);
-
-        window.setTimeout(() => {
-          el.remove();
-        }, duration + 80);
-      }
-
-      function spawnHearts(x, y) {
-        const now = performance.now();
-        if (now - state.lastHeartAt < 55) return;
-        state.lastHeartAt = now;
-
-        const count = Math.random() > 0.72 ? 2 : 1;
-        for (let i = 0; i < count; i += 1) {
-          createParticle({
-            x: x + rand(-6, 6),
-            y: y + rand(-4, 4),
-            kind: "heart"
-          });
-        }
-      }
-
-      function spawnFlowers(x, y) {
-        const count = 2 + Math.floor(Math.random() * 2);
-        for (let i = 0; i < count; i += 1) {
-          createParticle({
-            x: x + rand(-16, 16),
-            y: y + rand(-16, 16),
-            kind: "flower"
-          });
-        }
-      }
-
-      window.addEventListener("pointermove", (event) => {
-        state.pointerActive = true;
-        state.lastX = event.clientX;
-        state.lastY = event.clientY;
-        spawnHearts(event.clientX, event.clientY);
-      }, { passive: true });
-
-      window.addEventListener("pointerdown", (event) => {
-        state.pointerActive = true;
-        state.lastX = event.clientX;
-        state.lastY = event.clientY;
-        spawnFlowers(event.clientX, event.clientY);
-      }, { passive: true });
-
-      window.addEventListener("touchstart", (event) => {
-        if (!event.touches || !event.touches.length) return;
-        const touch = event.touches[0];
-        state.pointerActive = true;
-        state.lastX = touch.clientX;
-        state.lastY = touch.clientY;
-        spawnFlowers(touch.clientX, touch.clientY);
-      }, { passive: true });
-
-      window.addEventListener("touchmove", (event) => {
-        if (!event.touches || !event.touches.length) return;
-        const touch = event.touches[0];
-        state.pointerActive = true;
-        state.lastX = touch.clientX;
-        state.lastY = touch.clientY;
-        spawnHearts(touch.clientX, touch.clientY);
-      }, { passive: true });
-
-      window.addEventListener("mouseleave", () => {
-        state.pointerActive = false;
-      });
-
-      // Subtle ambient hearts near the center for a living background feel.
-      setInterval(() => {
-        if (Math.random() < 0.35) {
-          const rect = scene.getBoundingClientRect();
-          const cx = rect.width * 0.5 + rand(-130, 130);
-          const cy = rect.height * 0.5 + rand(-90, 90);
-          createParticle({ x: cx, y: cy, kind: "heart" });
-        }
-      }, 900);
-    })();
+    }, 5000);
   </script>
 </body>
 </html>
